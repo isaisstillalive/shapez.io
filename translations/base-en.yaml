@@ -490,6 +490,9 @@ buildings:
         default:
             name: &advanced_processor Advanced Processor
             description: Advanced shape processing
+        bundler:
+            name: Bundler
+            description: Bundles same 10 items.
 
     rotater:
         default:

@@ -476,6 +476,14 @@ buildings:
             name: 切断機 (四分割)
             description: 形を四分割します。<strong>もしひとつの出力しか使わない場合、他の出力を破棄しないと出力が詰まって停止することに注意してください！</strong>
 
+    advanced_processor:
+        default:
+            name: &advanced_processor Advanced Processor
+            description: Advanced shape processing
+        bundler:
+            name: 梱包機
+            description: 10個の同じアイテムを梱包して1つのアイテムにします。
+
     rotater:
         default:
             name: &rotater 回転機
