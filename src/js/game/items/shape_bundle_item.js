@@ -1,30 +1,40 @@
 import { DrawParameters } from "../../core/draw_parameters";
 import { types } from "../../savegame/serialization";
 import { BaseItem, enumItemType } from "../base_item";
-import { ShapeDefinition } from "../shape_definition";
+import { ShapeItem } from "./shape_item";
+import { ColorItem } from "./color_item";
 import { THEME } from "../theme";
 
 export class ShapeBundleItem extends BaseItem {
     static getId() {
-        return "shape_bundle";
+        return "bundle";
     }
 
     static getSchema() {
         return types.structured({
-            definition: types.string,
+            item: types.string,
+            itemType: types.string,
             quantity: types.uint,
         });
     }
 
     serialize() {
         return {
-            definition: this.definition.getHash(),
+            item: this.item.serialize(),
+            itemType: this.item.getItemType(),
             quantity: this.quantity,
         };
     }
 
     deserialize(data) {
-        this.definition = ShapeDefinition.fromShortKey(data.definition);
+        if (data.itemType == enumItemType.shape) {
+            this.item = new ShapeItem(null);
+        } else if (data.itemType == enumItemType.color) {
+            this.item = new ColorItem(null);
+        } else {
+            this.item = new ShapeItem(null);
+        }
+        this.item.deserialize(data.item);
         this.quantity = data.quantity;
     }
 
@@ -33,17 +43,16 @@ export class ShapeBundleItem extends BaseItem {
     }
 
     /**
-     * @param {ShapeDefinition} definition
+     * @param {BaseItem} item
      * @param {number} quantity
      */
-    constructor(definition, quantity) {
+    constructor(item, quantity) {
         super();
-        // logger.log("New shape item for shape definition", definition.generateId(), "created");
 
         /**
          * This property must not be modified on runtime, you have to clone the class in order to change the definition
          */
-        this.definition = definition;
+        this.item = item;
         this.quantity = quantity;
     }
 
@@ -58,8 +67,8 @@ export class ShapeBundleItem extends BaseItem {
      * @param {number=} size
      */
     draw(x, y, parameters, size) {
-        this.definition.draw(x, y - 2, parameters, size);
-        this.definition.draw(x, y - 1, parameters, size);
-        this.definition.draw(x, y, parameters, size);
+        this.item.draw(x, y - 2, parameters, size);
+        this.item.draw(x, y, parameters, size);
+        this.item.draw(x, y + 2, parameters, size);
     }
 }

@@ -91,8 +91,7 @@ export class BundlerComponent extends Component {
         }
 
         if (itemType === enumItemType.color) {
-            return false;
-            // return /** @type {ColorItem} */ (this.storedItem).color === /** @type {ColorItem} */ (item).color;
+            return /** @type {ColorItem} */ (this.storedItem).color === /** @type {ColorItem} */ (item).color;
         }
 
         if (itemType === enumItemType.shape) {
