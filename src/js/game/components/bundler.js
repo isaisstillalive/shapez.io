@@ -13,6 +13,7 @@ export class BundlerComponent extends Component {
         return {
             storedCount: types.uint,
             storedItem: types.nullable(types.obj(gItemRegistry)),
+            energy: types.uint,
         };
     }
 
@@ -37,6 +38,37 @@ export class BundlerComponent extends Component {
          * @type {number}
          */
         this.storedCount = 0;
+
+        /**
+         * @type {number}
+         */
+        this.energy = 0;
+    }
+
+    /**
+     * Returns whether this storage can accept the item
+     * @param {BaseItem} item
+     */
+    tryTakeItem(item) {
+        if (item.getItemType() == enumItemType.positiveEnergy) {
+            return this.tryAcceptPositiveEnergy();
+        }
+
+        if (this.canAcceptItem(item)) {
+            this.takeItem(item);
+            return true;
+        }
+
+        return false;
+    }
+
+    tryAcceptPositiveEnergy() {
+        if (this.energy >= 10) {
+            return false;
+        }
+
+        this.energy += 1;
+        return true;
     }
 
     /**
