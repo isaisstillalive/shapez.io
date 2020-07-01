@@ -8,7 +8,7 @@ export const enumItemType = {
     color: "color",
     positiveEnergy: "positiveEnergy",
     negativeEnergy: "negativeEnergy",
-    shapeBundle: "shapeBundle",
+    bundle: "bundle",
 };
 
 /** @enum {enumLayer} */

@@ -5,7 +5,7 @@ import { ShapeItem } from "./shape_item";
 import { ColorItem } from "./color_item";
 import { THEME } from "../theme";
 
-export class ShapeBundleItem extends BaseItem {
+export class BundleItem extends BaseItem {
     static getId() {
         return "bundle";
     }
@@ -39,7 +39,7 @@ export class ShapeBundleItem extends BaseItem {
     }
 
     getItemType() {
-        return enumItemType.shapeBundle;
+        return enumItemType.bundle;
     }
 
     /**

@@ -1,7 +1,7 @@
 import { GameSystemWithFilter } from "../game_system_with_filter";
 import { BundlerComponent } from "../components/bundler";
 import { enumLayer } from "../root";
-import { ShapeBundleItem } from "../items/shape_bundle_item";
+import { BundleItem } from "../items/bundle_item";
 import { NEGATIVE_ENERGY_ITEM_SINGLETON } from "../items/negative_energy_item";
 
 export class BundlerSystem extends GameSystemWithFilter {
@@ -20,7 +20,7 @@ export class BundlerSystem extends GameSystemWithFilter {
                 const nextSlot = ejectorComp.getFirstFreeSlot(enumLayer.regular);
                 const negativeSlot = ejectorComp.getFirstFreeSlot(enumLayer.wires);
                 if (nextSlot !== null && negativeSlot != null) {
-                    const bundleItem = new ShapeBundleItem(bundlerComp.storedItem, 10);
+                    const bundleItem = new BundleItem(bundlerComp.storedItem, 10);
 
                     if (ejectorComp.tryEject(nextSlot, bundleItem)) {
                         ejectorComp.tryEject(negativeSlot, NEGATIVE_ENERGY_ITEM_SINGLETON);
