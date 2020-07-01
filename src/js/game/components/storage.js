@@ -4,6 +4,7 @@ import { gItemRegistry } from "../../core/global_registries";
 import { BaseItem, enumItemType } from "../base_item";
 import { ColorItem } from "../items/color_item";
 import { ShapeItem } from "../items/shape_item";
+import { BundleItem } from "../items/bundle_item";
 
 export class StorageComponent extends Component {
     static getId() {
@@ -60,7 +61,11 @@ export class StorageComponent extends Component {
             return true;
         }
 
-        const itemType = item.getItemType();
+        let itemType = item.getItemType();
+        if (itemType == enumItemType.bundle) {
+            item = /** @type {BundleItem} */ (item).item;
+            itemType = item.getItemType();
+        }
 
         // Check type matches
         if (itemType !== this.storedItem.getItemType()) {
@@ -84,7 +89,12 @@ export class StorageComponent extends Component {
      * @param {BaseItem} item
      */
     takeItem(item) {
-        this.storedItem = item;
-        this.storedCount++;
+        if (item.getItemType() === enumItemType.bundle) {
+            this.storedItem = /** @type {BundleItem} */ (item).item;
+            this.storedCount += /** @type {BundleItem} */ (item).quantity;
+        } else {
+            this.storedItem = item;
+            this.storedCount++;
+        }
     }
 }
