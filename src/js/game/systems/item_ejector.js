@@ -332,6 +332,16 @@ export class ItemEjectorSystem extends GameSystemWithFilter {
             return false;
         }
 
+        const bundlerComp = receiver.components.Bundler;
+        if (bundlerComp) {
+            if (bundlerComp.canAcceptItem(item)) {
+                bundlerComp.takeItem(item);
+                return true;
+            }
+
+            return false;
+        }
+
         return false;
     }
 
