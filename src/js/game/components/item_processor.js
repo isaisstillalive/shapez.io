@@ -1,7 +1,8 @@
 import { gItemRegistry } from "../../core/global_registries";
 import { types } from "../../savegame/serialization";
-import { BaseItem } from "../base_item";
+import { BaseItem, enumItemType } from "../base_item";
 import { Component } from "../component";
+import { BundleItem } from "../items/bundle_item";
 
 /** @enum {string} */
 export const enumItemProcessorTypes = {
@@ -102,8 +103,27 @@ export class ItemProcessorComponent extends Component {
      * @param {number} sourceSlot
      */
     tryTakeItem(item, sourceSlot) {
-        if (this.type === enumItemProcessorTypes.hub || this.type === enumItemProcessorTypes.trash) {
+        if (this.type === enumItemProcessorTypes.hub) {
             // Hub has special logic .. not really nice but efficient.
+            if (item.getItemType() === enumItemType.shape) {
+                this.inputSlots.push({ item, sourceSlot });
+                return true;
+            } else if (item.getItemType() === enumItemType.bundle) {
+                const bundleItem = /** @type BundleItem */ (item).item;
+                if (bundleItem.getItemType() !== enumItemType.shape) {
+                    return false;
+                }
+                const quantity = /** @type BundleItem */ (item).quantity;
+                for (let index = 0; index < quantity; index++) {
+                    this.inputSlots.push({
+                        item: bundleItem,
+                        sourceSlot: sourceSlot,
+                    });
+                }
+                return true;
+            }
+            return false;
+        } else if (this.type === enumItemProcessorTypes.trash) {
             this.inputSlots.push({ item, sourceSlot });
             return true;
         }
