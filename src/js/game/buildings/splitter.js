@@ -9,9 +9,16 @@ import { GameRoot, enumLayer } from "../root";
 import { enumHubGoalRewards } from "../tutorial_goals";
 import { T } from "../../translations";
 import { formatItemsPerSecond } from "../../core/utils";
+import { AndnotComponent } from "../components/andnot";
+import { Loader } from "../../core/loader";
 
 /** @enum {string} */
-export const enumSplitterVariants = { compact: "compact", compactInverse: "compact-inverse" };
+export const enumSplitterVariants = {
+    compact: "compact",
+    compactInverse: "compact-inverse",
+    andnot: "andnot",
+    andnotInverse: "andnot-inverse",
+};
 
 export class MetaSplitterBuilding extends MetaBuilding {
     constructor() {
@@ -24,6 +31,8 @@ export class MetaSplitterBuilding extends MetaBuilding {
                 return new Vector(2, 1);
             case enumSplitterVariants.compact:
             case enumSplitterVariants.compactInverse:
+            case enumSplitterVariants.andnot:
+            case enumSplitterVariants.andnotInverse:
                 return new Vector(1, 1);
             default:
                 assertAlways(false, "Unknown splitter variant: " + variant);
@@ -53,6 +62,8 @@ export class MetaSplitterBuilding extends MetaBuilding {
                 defaultBuildingVariant,
                 enumSplitterVariants.compact,
                 enumSplitterVariants.compactInverse,
+                enumSplitterVariants.andnot,
+                enumSplitterVariants.andnotInverse,
             ];
         }
         return super.getAvailableVariants(root);
@@ -111,6 +122,18 @@ export class MetaSplitterBuilding extends MetaBuilding {
     updateVariants(entity, rotationVariant, variant) {
         switch (variant) {
             case defaultBuildingVariant: {
+                if (!entity.components.ItemProcessor) {
+                    entity.addComponent(
+                        new ItemProcessorComponent({
+                            inputsPerCharge: 1,
+                            processorType: enumItemProcessorTypes.splitter,
+                        })
+                    );
+                }
+                if (entity.components.Andnot) {
+                    entity.removeComponent(AndnotComponent);
+                }
+
                 entity.components.ItemAcceptor.setSlots([
                     {
                         pos: new Vector(0, 0),
@@ -132,10 +155,24 @@ export class MetaSplitterBuilding extends MetaBuilding {
                     { pos: new Vector(1, 0), direction: enumDirection.top, layer: enumLayer.regular },
                 ];
 
+                entity.components.StaticMapEntity.spriteKey = "sprites/buildings/" + this.id + ".png";
+
                 break;
             }
             case enumSplitterVariants.compact:
             case enumSplitterVariants.compactInverse: {
+                if (!entity.components.ItemProcessor) {
+                    entity.addComponent(
+                        new ItemProcessorComponent({
+                            inputsPerCharge: 1,
+                            processorType: enumItemProcessorTypes.splitter,
+                        })
+                    );
+                }
+                if (entity.components.Andnot) {
+                    entity.removeComponent(AndnotComponent);
+                }
+
                 entity.components.ItemAcceptor.setSlots([
                     {
                         pos: new Vector(0, 0),
@@ -159,10 +196,90 @@ export class MetaSplitterBuilding extends MetaBuilding {
                     { pos: new Vector(0, 0), direction: enumDirection.top, layer: enumLayer.regular },
                 ];
 
+                entity.components.StaticMapEntity.spriteKey =
+                    "sprites/buildings/" + this.id + "-" + variant + ".png";
+
+                break;
+            }
+            case enumSplitterVariants.andnot:
+            case enumSplitterVariants.andnotInverse: {
+                if (entity.components.ItemProcessor) {
+                    entity.removeComponent(ItemProcessorComponent);
+                }
+                if (!entity.components.Andnot) {
+                    entity.addComponent(new AndnotComponent({}));
+                }
+
+                entity.components.ItemAcceptor.setSlots([
+                    {
+                        pos: new Vector(0, 0),
+                        directions: [enumDirection.bottom],
+                    },
+                    {
+                        pos: new Vector(0, 0),
+                        directions: [
+                            variant === enumSplitterVariants.andnotInverse
+                                ? enumDirection.left
+                                : enumDirection.right,
+                        ],
+                    },
+                ]);
+
+                entity.components.ItemEjector.setSlots([
+                    { pos: new Vector(0, 0), direction: enumDirection.top },
+                ]);
+
+                entity.components.ItemAcceptor.beltUnderlays = [
+                    { pos: new Vector(0, 0), direction: enumDirection.top, layer: enumLayer.regular },
+                ];
+
+                entity.components.StaticMapEntity.spriteKey =
+                    "sprites/buildings/" +
+                    this.id +
+                    "-" +
+                    (variant === enumSplitterVariants.andnotInverse
+                        ? enumSplitterVariants.compactInverse
+                        : enumSplitterVariants.compact) +
+                    ".png";
+
                 break;
             }
             default:
                 assertAlways(false, "Unknown painter variant: " + variant);
         }
+    }
+
+    getPreviewSprite(rotationVariant = 0, variant = defaultBuildingVariant) {
+        switch (variant) {
+            case enumSplitterVariants.andnot: {
+                variant = enumSplitterVariants.compact;
+                break;
+            }
+            case enumSplitterVariants.andnotInverse: {
+                variant = enumSplitterVariants.compactInverse;
+                break;
+            }
+            default: {
+                return super.getPreviewSprite(rotationVariant, variant);
+            }
+        }
+        return Loader.getSprite("sprites/buildings/" + this.id + "-" + variant + ".png");
+    }
+
+    getBlueprintSprite(rotationVariant = 0, variant = defaultBuildingVariant) {
+        switch (variant) {
+            case enumSplitterVariants.andnot: {
+                variant = enumSplitterVariants.compact;
+                break;
+            }
+            case enumSplitterVariants.andnotInverse: {
+                variant = enumSplitterVariants.compactInverse;
+                break;
+            }
+            default: {
+                return super.getBlueprintSprite(rotationVariant, variant);
+            }
+        }
+        return Loader.getSprite("sprites/blueprints/" + this.id + "-compact-inverse.png");
     }
 }

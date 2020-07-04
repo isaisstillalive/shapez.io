@@ -13,6 +13,7 @@ import { StorageComponent } from "./components/storage";
 import { EnergyGeneratorComponent } from "./components/energy_generator";
 import { WiredPinsComponent } from "./components/wired_pins";
 import { EnergyConsumerComponent } from "./components/energy_consumer";
+import { AndnotComponent } from "./components/andnot";
 
 export function initComponentRegistry() {
     gComponentRegistry.register(StaticMapEntityComponent);
@@ -29,6 +30,7 @@ export function initComponentRegistry() {
     gComponentRegistry.register(EnergyGeneratorComponent);
     gComponentRegistry.register(WiredPinsComponent);
     gComponentRegistry.register(EnergyConsumerComponent);
+    gComponentRegistry.register(AndnotComponent);
 
     // IMPORTANT ^^^^^ UPDATE ENTITY COMPONENT STORAGE AFTERWARDS
 

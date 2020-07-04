@@ -332,6 +332,15 @@ export class ItemEjectorSystem extends GameSystemWithFilter {
             return false;
         }
 
+        const andnotComp = receiver.components.Andnot;
+        if (andnotComp) {
+            if (andnotComp.tryTakeItem(item, slotIndex)) {
+                return true;
+            }
+
+            return false;
+        }
+
         return false;
     }
 

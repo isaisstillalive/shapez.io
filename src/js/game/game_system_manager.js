@@ -16,6 +16,7 @@ import { StorageSystem } from "./systems/storage";
 import { EnergyGeneratorSystem } from "./systems/energy_generator";
 import { WiredPinsSystem } from "./systems/wired_pins";
 import { EnergyConsumerSystem } from "./systems/energy_consumer";
+import { AndnotSystem } from "./systems/andnot";
 
 const logger = createLogger("game_system_manager");
 
@@ -114,6 +115,8 @@ export class GameSystemManager {
         // orientation of an entity after it is placed -> the item acceptor cache
         // then would be invalid
         add("itemAcceptor", ItemAcceptorSystem);
+
+        add("andnot", AndnotSystem);
 
         logger.log("📦 There are", this.systemUpdateOrder.length, "game systems");
     }

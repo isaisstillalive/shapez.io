@@ -478,6 +478,14 @@ buildings:
             name: Merger (compact)
             description: Merges two conveyor belts into one.
 
+        andnot:
+            name: Andnot
+            description: Andnot
+
+        andnot-inverse:
+            name: Andnot
+            description: Andnot
+
     cutter:
         default:
             name: &cutter Cutter
