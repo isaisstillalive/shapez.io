@@ -10,9 +10,14 @@ export class AndnotComponent extends Component {
 
     static getSchema() {
         return {
-            item: types.nullable(types.obj(gItemRegistry)),
+            items: types.array(
+                types.structured({
+                    item: types.obj(gItemRegistry),
+                    slot: types.uint,
+                })
+            ),
             blocking: types.float,
-            interval: types.float,
+            intervals: types.array(types.float),
         };
     }
 
@@ -28,14 +33,14 @@ export class AndnotComponent extends Component {
     constructor({}) {
         super();
 
-        /** @type {BaseItem} */
-        this.item = null;
+        /** @type {Array<{item: BaseItem, slot: number}>} */
+        this.items = [];
 
         /** @type {number} */
         this.blocking = 0;
 
-        /** @type {number} */
-        this.interval = 0;
+        /** @type {Array<number>} */
+        this.intervals = [0, 0, 0];
     }
 
     /**
@@ -44,17 +49,11 @@ export class AndnotComponent extends Component {
      * @param {number} slot
      */
     tryTakeItem(item, slot) {
-        if (slot == 1) {
-            this.blocking = this.interval;
-            this.interval = 1;
-            return true;
-        }
-
-        if (this.item) {
+        if (this.items.some(item => item.slot === slot)) {
             return false;
         }
 
-        this.item = item;
+        this.items.push({ item, slot });
         return true;
     }
 }

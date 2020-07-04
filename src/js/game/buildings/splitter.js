@@ -17,7 +17,6 @@ export const enumSplitterVariants = {
     compact: "compact",
     compactInverse: "compact-inverse",
     andnot: "andnot",
-    andnotInverse: "andnot-inverse",
 };
 
 export class MetaSplitterBuilding extends MetaBuilding {
@@ -28,11 +27,10 @@ export class MetaSplitterBuilding extends MetaBuilding {
     getDimensions(variant) {
         switch (variant) {
             case defaultBuildingVariant:
+            case enumSplitterVariants.andnot:
                 return new Vector(2, 1);
             case enumSplitterVariants.compact:
             case enumSplitterVariants.compactInverse:
-            case enumSplitterVariants.andnot:
-            case enumSplitterVariants.andnotInverse:
                 return new Vector(1, 1);
             default:
                 assertAlways(false, "Unknown splitter variant: " + variant);
@@ -63,7 +61,6 @@ export class MetaSplitterBuilding extends MetaBuilding {
                 enumSplitterVariants.compact,
                 enumSplitterVariants.compactInverse,
                 enumSplitterVariants.andnot,
-                enumSplitterVariants.andnotInverse,
             ];
         }
         return super.getAvailableVariants(root);
@@ -201,8 +198,7 @@ export class MetaSplitterBuilding extends MetaBuilding {
 
                 break;
             }
-            case enumSplitterVariants.andnot:
-            case enumSplitterVariants.andnotInverse: {
+            case enumSplitterVariants.andnot: {
                 if (entity.components.ItemProcessor) {
                     entity.removeComponent(ItemProcessorComponent);
                 }
@@ -216,31 +212,22 @@ export class MetaSplitterBuilding extends MetaBuilding {
                         directions: [enumDirection.bottom],
                     },
                     {
-                        pos: new Vector(0, 0),
-                        directions: [
-                            variant === enumSplitterVariants.andnotInverse
-                                ? enumDirection.left
-                                : enumDirection.right,
-                        ],
+                        pos: new Vector(1, 0),
+                        directions: [enumDirection.bottom],
                     },
                 ]);
 
                 entity.components.ItemEjector.setSlots([
                     { pos: new Vector(0, 0), direction: enumDirection.top },
+                    { pos: new Vector(1, 0), direction: enumDirection.top },
                 ]);
 
                 entity.components.ItemAcceptor.beltUnderlays = [
                     { pos: new Vector(0, 0), direction: enumDirection.top, layer: enumLayer.regular },
+                    { pos: new Vector(1, 0), direction: enumDirection.top, layer: enumLayer.regular },
                 ];
 
-                entity.components.StaticMapEntity.spriteKey =
-                    "sprites/buildings/" +
-                    this.id +
-                    "-" +
-                    (variant === enumSplitterVariants.andnotInverse
-                        ? enumSplitterVariants.compactInverse
-                        : enumSplitterVariants.compact) +
-                    ".png";
+                entity.components.StaticMapEntity.spriteKey = "sprites/buildings/" + this.id + ".png";
 
                 break;
             }
@@ -252,34 +239,22 @@ export class MetaSplitterBuilding extends MetaBuilding {
     getPreviewSprite(rotationVariant = 0, variant = defaultBuildingVariant) {
         switch (variant) {
             case enumSplitterVariants.andnot: {
-                variant = enumSplitterVariants.compact;
-                break;
-            }
-            case enumSplitterVariants.andnotInverse: {
-                variant = enumSplitterVariants.compactInverse;
-                break;
+                return Loader.getSprite("sprites/buildings/" + this.id + ".png");
             }
             default: {
                 return super.getPreviewSprite(rotationVariant, variant);
             }
         }
-        return Loader.getSprite("sprites/buildings/" + this.id + "-" + variant + ".png");
     }
 
     getBlueprintSprite(rotationVariant = 0, variant = defaultBuildingVariant) {
         switch (variant) {
             case enumSplitterVariants.andnot: {
-                variant = enumSplitterVariants.compact;
-                break;
-            }
-            case enumSplitterVariants.andnotInverse: {
-                variant = enumSplitterVariants.compactInverse;
-                break;
+                return Loader.getSprite("sprites/blueprints/" + this.id + ".png");
             }
             default: {
                 return super.getBlueprintSprite(rotationVariant, variant);
             }
         }
-        return Loader.getSprite("sprites/blueprints/" + this.id + "-compact-inverse.png");
     }
 }
