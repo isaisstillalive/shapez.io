@@ -8,6 +8,7 @@ import { GameSystemWithFilter } from "../game_system_with_filter";
 import { MapChunkView } from "../map_chunk_view";
 import { enumLayer } from "../root";
 import { AndnotComponent } from "../components/andnot";
+import { Loader } from "../../core/loader";
 
 /**
  * @typedef {{
@@ -19,6 +20,8 @@ import { AndnotComponent } from "../components/andnot";
 export class AndnotSystem extends GameSystemWithFilter {
     constructor(root) {
         super(root, [AndnotComponent]);
+
+        this.storageOverlaySprite = Loader.getSprite("sprites/misc/storage_overlay.png");
     }
 
     update() {
@@ -83,5 +86,33 @@ export class AndnotSystem extends GameSystemWithFilter {
 
             andnotComp.items = andnotComp.items.filter(item => ejectedItems.indexOf(item.item) == -1);
         }
+    }
+
+    draw(parameters) {
+        this.forEachMatchingEntityOnScreen(parameters, this.drawEntity.bind(this));
+    }
+
+    /**
+     * @param {DrawParameters} parameters
+     * @param {Entity} entity
+     */
+    drawEntity(parameters, entity) {
+        const context = parameters.context;
+        const staticComp = entity.components.StaticMapEntity;
+
+        if (!staticComp.shouldBeDrawn(parameters)) {
+            return;
+        }
+
+        const center = staticComp.getTileSpaceBounds().getCenter().toWorldSpace();
+        this.storageOverlaySprite.drawCached(parameters, center.x - 15, center.y - 7.5, 30, 15);
+
+        context.font = "bold 6px GameFont";
+        context.textAlign = "center";
+        context.fillStyle = "#64666e";
+        context.fillText("ANDNOT", center.x, center.y + 2);
+
+        context.textAlign = "left";
+        context.globalAlpha = 1;
     }
 }

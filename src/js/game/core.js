@@ -406,6 +406,7 @@ export class GameCore {
             systems.energyGenerator.draw(params);
             systems.storage.draw(params);
             systems.energyConsumer.draw(params);
+            systems.andnot.draw(params);
         }
 
         root.hud.parts.wiresOverlay.draw(params);
