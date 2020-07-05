@@ -14,7 +14,12 @@ export class BundlerSystem extends GameSystemWithFilter {
             const entity = this.allEntities[i];
             const bundlerComp = entity.components.Bundler;
 
-            if (bundlerComp.storedItem && bundlerComp.storedCount == 10 && bundlerComp.energy >= 1) {
+            if (bundlerComp.storedItem && bundlerComp.storedCount == 10) {
+                const energyConsumerComp = entity.components.EnergyConsumer;
+                if (!energyConsumerComp.tryStartNextCharge()) {
+                    continue;
+                }
+
                 const ejectorComp = entity.components.ItemEjector;
 
                 const nextSlot = ejectorComp.getFirstFreeSlot(enumLayer.regular);
@@ -23,10 +28,8 @@ export class BundlerSystem extends GameSystemWithFilter {
                     const bundleItem = new BundleItem(bundlerComp.storedItem, 10);
 
                     if (ejectorComp.tryEject(nextSlot, bundleItem)) {
-                        ejectorComp.tryEject(negativeSlot, NEGATIVE_ENERGY_ITEM_SINGLETON);
                         bundlerComp.storedCount = 0;
                         bundlerComp.storedItem = null;
-                        bundlerComp.energy -= 1;
                     }
                 }
             }

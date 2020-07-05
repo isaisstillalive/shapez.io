@@ -3,6 +3,7 @@ import { types } from "../../savegame/serialization";
 import { gItemRegistry } from "../../core/global_registries";
 import { BaseItem, enumItemType } from "../base_item";
 import { ShapeItem } from "../items/shape_item";
+import { ColorItem } from "../items/color_item";
 
 export class BundlerComponent extends Component {
     static getId() {
@@ -13,7 +14,6 @@ export class BundlerComponent extends Component {
         return {
             storedCount: types.uint,
             storedItem: types.nullable(types.obj(gItemRegistry)),
-            energy: types.uint,
         };
     }
 
@@ -38,11 +38,6 @@ export class BundlerComponent extends Component {
          * @type {number}
          */
         this.storedCount = 0;
-
-        /**
-         * @type {number}
-         */
-        this.energy = 0;
     }
 
     /**
@@ -50,25 +45,12 @@ export class BundlerComponent extends Component {
      * @param {BaseItem} item
      */
     tryTakeItem(item) {
-        if (item.getItemType() == enumItemType.positiveEnergy) {
-            return this.tryAcceptPositiveEnergy();
-        }
-
         if (this.canAcceptItem(item)) {
             this.takeItem(item);
             return true;
         }
 
         return false;
-    }
-
-    tryAcceptPositiveEnergy() {
-        if (this.energy >= 10) {
-            return false;
-        }
-
-        this.energy += 1;
-        return true;
     }
 
     /**

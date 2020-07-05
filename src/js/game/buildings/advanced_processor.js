@@ -166,7 +166,7 @@ export class MetaAdvancedProcessorBuilding extends MetaBuilding {
 
                 entity.components.ItemAcceptor.setSlots([
                     {
-                        pos: new Vector(0, 1),
+                        pos: new Vector(0, 0),
                         directions: [enumDirection.left],
                         filter: enumItemType.shape,
                     },
