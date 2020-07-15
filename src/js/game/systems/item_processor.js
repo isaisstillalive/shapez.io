@@ -20,10 +20,6 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
             const ejectorComp = entity.components.ItemEjector;
 
             // First of all, process the current recipe
-            processorComp.secondsUntilEject = Math.max(
-                0,
-                processorComp.secondsUntilEject - this.root.dynamicTickrate.deltaSeconds
-            );
 
             if (G_IS_DEV && globalConfig.debug.instantProcessors) {
                 processorComp.secondsUntilEject = 0;
@@ -31,7 +27,7 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
 
             // Check if we have any finished items we can eject
             if (
-                processorComp.secondsUntilEject === 0 && // it was processed in time
+                this.root.time.isIngameTimerExpired(processorComp.secondsUntilEject, 0) && // it was processed in time
                 processorComp.itemsToEject.length > 0 // we have some items left to eject
             ) {
                 for (let itemIndex = 0; itemIndex < processorComp.itemsToEject.length; ++itemIndex) {
@@ -103,7 +99,7 @@ export class ItemProcessorSystem extends GameSystemWithFilter {
         }
 
         const baseSpeed = this.root.hubGoals.getProcessorBaseSpeed(processorComp.type);
-        processorComp.secondsUntilEject = 1 / baseSpeed;
+        processorComp.secondsUntilEject = this.root.time.now() + 1 / baseSpeed;
 
         /** @type {Array<{item: BaseItem, requiredSlot?: number, preferredSlot?: number}>} */
         const outItems = [];
